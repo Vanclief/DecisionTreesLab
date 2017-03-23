@@ -12,7 +12,6 @@ def parse_attributes(input_lines)
 
   input_lines.each do |line|
 
-
     attribute_name = line.match(/@attribute\s*(?<name>.*)\s*/)
     attribute_value = line.match(/\{(?<value>.*)\}/)
 

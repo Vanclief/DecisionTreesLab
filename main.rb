@@ -17,7 +17,7 @@ def parse_attributes(input_lines)
     attribute_value = line.match(/\{(?<value>.*)\}/)
 
     if attribute_name
-      attributes[attribute_name['name']] = [counter, attribute_value['value']]
+      attributes[attribute_name['name'].gsub(/\s.+/, '')] = [counter, attribute_value['value']]
       counter += 1
     end
   end

@@ -6,37 +6,18 @@ def read_input()
   input_lines
 end
 
-def parse_input(input_lines)
-
-  sections = {}
-  current_section = nil
-
-  input_lines.each do |line|
-    # matching for attribute
-    line.match(/@attribute\s*(?<value>.)\s*/)
-    section = line.match(/\{(?<value>.*)\}/)
-    parsed_line = line.downcase.gsub(/[\s^"]/ ,"")
-    if section
-      current_section = section['value']
-      sections[current_section] = []
-    else
-      sections[current_section] << parsed_line
-    end
-  end
-  sections
-end
-
 def parse_attributes(input_lines)
   attributes = Hash.new
   counter = 0
 
   input_lines.each do |line|
 
-    attribute_name = line.match(/@attribute\s*(?<value>.)\s*/)
-    attribute_values = line.match(/\{(?<value>.*)\}/)
+
+    attribute_name = line.match(/@attribute\s*(?<name>.*)\s*/)
+    attribute_value = line.match(/\{(?<value>.*)\}/)
 
     if attribute_name
-      attributes[attribute_name] = [counter, attribute_values['value']]
+      attributes[attribute_name['name']] = [counter, attribute_value['value']]
       counter += 1
     end
   end

@@ -16,22 +16,44 @@ def parse_attributes(input_lines)
     attribute_value = line.match(/\{(?<value>.*)\}/)
 
     if attribute_name
-      attributes[attribute_name['name'].gsub(/\s.+/, '')] = [counter, attribute_value['value']]
+      attributes[attribute_name['name']
+      .gsub(/\s.+/, '')] = [counter, attribute_value['value']]
       counter += 1
     end
   end
-  attributes
+  return attributes
 end
 
+def parse_data(input_lines)
 
+  data = Array.new
+  data_flag = false;
+
+  input_lines.each do |line|
+
+    data_line = line.match(/@data\s*(?<name>.*)\s*/)
+
+    if data_flag
+      line = line.strip
+      line_arr = line.split(',')
+      data.push(line_arr)
+    end
+
+    if data_line
+      data_flag = true
+    end
+  end
+  return data
+end
 
 # Read the input
 input = read_input()
+
+# Parse the input
 attributes = parse_attributes(input)
-attributes.each do |key, index, value|
-  puts "#{key}:#{index}:#{value}"
-end
+data = parse_data(input)
 
+# puts attributes.inspect
+# puts data.inspect
 
-# Create the sections based from the input
-# parsed = parse_input(input)
+#

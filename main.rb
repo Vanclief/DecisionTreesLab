@@ -64,8 +64,10 @@ def get_entropy(attributes, data)
       end
     end
 
-    e = c.to_f/data.length * Math.log2(c.to_f/data.length)
-    entropy += e
+    if c != 0
+      e = c.to_f/data.length * Math.log2(c.to_f/data.length)
+      entropy += e
+    end
   end
 
   return entropy * -1
@@ -74,6 +76,7 @@ end
 
 def get_information_gain(attribute, attributes, data, entropy)
   entropies = 0
+
   attribute_index = attributes[attribute][0]
   attribute_labels = attributes[attribute][1].split(',')
 
@@ -90,12 +93,27 @@ def get_information_gain(attribute, attributes, data, entropy)
         filtered_data.push(row)
       end
     end
+    puts '---' + attribute
     size =  filtered_data.length
     e =  get_entropy(attributes, filtered_data)
     entropies += e * size.to_f / data.length
   end
 
   return entropy - entropies
+
+end
+
+def get_lowest_info_gain(attributes, data)
+
+  entropy = get_entropy(attributes, data)
+
+  info_gains = Array.new
+
+  attributes.keys.each do |key|
+    info_gains.push(get_information_gain(key, attributes, data, entropy))
+  end
+
+  puts info_gains.min
 
 end
 
@@ -106,9 +124,10 @@ input = read_input()
 attributes = parse_attributes(input)
 data = parse_data(input)
 entropy = get_entropy(attributes, data)
-attribute = 'temperature'
-info_gain = get_information_gain(attribute, attributes, data, entropy)
-puts info_gain
+get_lowest_info_gain(attributes, data)
+# attribute = 'temperature'
+# info_gain = get_information_gain(attribute, attributes, data, entropy)
+
 
 
 # puts 'Attributes:'

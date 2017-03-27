@@ -55,6 +55,7 @@ def get_entropy(attributes, data)
   labels = attributes[last_index][1].split(',')
 
   labels.each do |label|
+    label = label.strip
     c = 0
 
     data.each do |row|
@@ -62,12 +63,11 @@ def get_entropy(attributes, data)
         c += 1
       end
     end
-    e = c/data.length * Math.log2(c/data.length)
-    e.inspect
+    e = c.to_f/data.length * Math.log2(c.to_f/data.length)
     entropy += e
   end
 
-  return entropy
+  return entropy * -1
 
 end
 

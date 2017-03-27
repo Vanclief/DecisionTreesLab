@@ -47,12 +47,27 @@ def parse_data(input_lines)
 end
 
 def get_entropy(attributes, data)
+
+  entropy = 0
   # Ok the following 3 lines make my eyes bleed, but Im in a hurry sorry
   attributes_array = attributes.to_a.last
   last_index = attributes_array[0]
   labels = attributes[last_index][1].split(',')
-  labels.length
 
+  labels.each do |label|
+    c = 0
+
+    data.each do |row|
+      if row[-1].include? label
+        c += 1
+      end
+    end
+    e = c/data.length * Math.log2(c/data.length)
+    e.inspect
+    entropy += e
+  end
+
+  return entropy
 
 end
 
@@ -68,10 +83,10 @@ attributes = parse_attributes(input)
 data = parse_data(input)
 entropy = get_entropy(attributes, data)
 
-puts 'Attributes:'
-puts attributes.inspect
-puts 'Data:'
-puts data.inspect
+# puts 'Attributes:'
+# puts attributes.inspect
+# puts 'Data:'
+# puts data.inspect
 puts 'Entropy:'
 puts entropy
 

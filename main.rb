@@ -47,8 +47,8 @@ def parse_data(input_lines)
 end
 
 def get_entropy(attributes, data)
-
   entropy = 0
+
   # Ok the following 3 lines make my eyes bleed, but Im in a hurry sorry
   attributes_array = attributes.to_a.last
   last_index = attributes_array[0]
@@ -63,6 +63,7 @@ def get_entropy(attributes, data)
         c += 1
       end
     end
+
     e = c.to_f/data.length * Math.log2(c.to_f/data.length)
     entropy += e
   end
@@ -71,7 +72,30 @@ def get_entropy(attributes, data)
 
 end
 
-def info_gain()
+def get_information_gain(attribute, attributes, data, entropy)
+  entropies = 0
+  attribute_index = attributes[attribute][0]
+  attribute_labels = attributes[attribute][1].split(',')
+
+  attributes_array = attributes.to_a.last
+  last_index = attributes_array[0]
+  labels = attributes[last_index][1].split(',')
+
+  attribute_labels.each do |attribute_label|
+    filtered_data = Array.new
+    attribute_label = attribute_label.strip
+
+    data.each do |row|
+      if row[attribute_index].include? attribute_label
+        filtered_data.push(row)
+      end
+    end
+    size =  filtered_data.length
+    e =  get_entropy(attributes, filtered_data)
+    entropies += e * size.to_f / data.length
+  end
+
+  return entropy - entropies
 
 end
 
@@ -82,12 +106,16 @@ input = read_input()
 attributes = parse_attributes(input)
 data = parse_data(input)
 entropy = get_entropy(attributes, data)
+attribute = 'temperature'
+info_gain = get_information_gain(attribute, attributes, data, entropy)
+puts info_gain
+
 
 # puts 'Attributes:'
 # puts attributes.inspect
 # puts 'Data:'
 # puts data.inspect
-puts 'Entropy:'
-puts entropy
+# puts 'Entropy:'
+# puts entropy
 
 #

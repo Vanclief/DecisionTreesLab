@@ -52,14 +52,14 @@ def get_entropy(attributes, data)
   # Ok the following 3 lines make my eyes bleed, but Im in a hurry sorry
   attributes_array = attributes.to_a.last
   last_index = attributes_array[0]
-  labels = attributes[last_index][1].split(',')
+  values = attributes[last_index][1].split(',')
 
-  labels.each do |label|
-    label = label.strip
+  values.each do |value|
+    value = value.strip
     c = 0
 
     data.each do |row|
-      if row[-1].include? label
+      if row[-1].include? value
         c += 1
       end
     end
@@ -78,22 +78,17 @@ def get_information_gain(attribute, attributes, data, entropy)
   entropies = 0
 
   attribute_index = attributes[attribute][0]
-  attribute_labels = attributes[attribute][1].split(',')
+  attribute_values = attributes[attribute][1].split(',')
 
-  attributes_array = attributes.to_a.last
-  last_index = attributes_array[0]
-  labels = attributes[last_index][1].split(',')
-
-  attribute_labels.each do |attribute_label|
+  attribute_values.each do |attribute_value|
     filtered_data = Array.new
-    attribute_label = attribute_label.strip
+    attribute_value = attribute_value.strip
 
     data.each do |row|
-      if row[attribute_index].include? attribute_label
+      if row[attribute_index].include? attribute_value
         filtered_data.push(row)
       end
     end
-    puts '---' + attribute
     size =  filtered_data.length
     e =  get_entropy(attributes, filtered_data)
     entropies += e * size.to_f / data.length
@@ -103,17 +98,48 @@ def get_information_gain(attribute, attributes, data, entropy)
 
 end
 
-def get_lowest_info_gain(attributes, data)
+def get_max_info_gain(attributes, data)
 
   entropy = get_entropy(attributes, data)
 
+  keys = attributes.keys
+  keys.pop #Remove the last key because those are the results
+
   info_gains = Array.new
 
-  attributes.keys.each do |key|
-    info_gains.push(get_information_gain(key, attributes, data, entropy))
+  keys.each do |key|
+    info_gain = get_information_gain(key, attributes, data, entropy)
+    info_gains.push(info_gain)
   end
 
-  puts info_gains.min
+  max_index = info_gains.each_with_index.max[1]
+  keys[max_index]
+
+end
+
+def split(attributes, data)
+
+
+  attribute = get_max_info_gain(attributes, data)
+
+  attribute_index = attributes[attribute][0]
+  attribute_values = attributes[attribute][1].split(',')
+
+  attribute_values.each do |value|
+    subset = Array.new
+    value = value.strip
+    puts attribute + ": " + value
+    data.each do |row|
+      if row[attribute_index].include? value
+        row.delete(value)
+        subset.push(row)
+      end
+    end
+    attributes.delete(attribute)
+    if subset.length > 0
+      split(attributes, subset)
+    end
+  end
 
 end
 
@@ -123,10 +149,10 @@ input = read_input()
 # Parse the input
 attributes = parse_attributes(input)
 data = parse_data(input)
-entropy = get_entropy(attributes, data)
-get_lowest_info_gain(attributes, data)
-# attribute = 'temperature'
-# info_gain = get_information_gain(attribute, attributes, data, entropy)
+
+# Split database
+split(attributes, data)
+
 
 
 

@@ -59,7 +59,7 @@ def get_entropy(attributes, data)
     c = 0
 
     data.each do |row|
-      if row[-1].include? value
+      if row.last.include? value
         c += 1
       end
     end
@@ -100,32 +100,44 @@ end
 
 def get_max_info_gain(attributes, data)
 
-  # puts 'attributes'
-  # puts attributes.inspect
-  # puts 'data'
-  # puts data.inspect
+  information_gains = Array.new
+  max_index = 0
 
   entropy = get_entropy(attributes, data)
-
   keys = attributes.keys
   keys.pop #Remove the last key because those are the results
 
-  info_gains = Array.new
-
   keys.each do |key|
-    info_gain = get_information_gain(key, attributes, data, entropy)
-    info_gains.push(info_gain)
+
+    # This method is also horroble... but it works. It gets the first max value from array
+    if information_gains.length > 0
+
+      max_information_gain = information_gains.max
+      information_gain = get_information_gain(key, attributes, data, entropy)
+      information_gains.push(information_gain)
+      index = information_gains.index(information_gain)
+
+      if  information_gain > max_information_gain
+        max_index = index
+      end
+
+    else
+      information_gain = get_information_gain(key, attributes, data, entropy)
+      information_gains.push(information_gain)
+    end
   end
 
-  max_index = info_gains.each_with_index.max[1]
-  keys[max_index]
+  return keys[max_index], information_gains.max
 
 end
 
 def split(attributes, data, depth)
 
-
-  attribute = get_max_info_gain(attributes, data)
+  attribute, information_gain = get_max_info_gain(attributes, data)
+  # puts '-- SPLIT: ' + attribute + '--'
+    # data.each do |x|
+      # puts x.inspect
+    # end
 
   attribute_index = attributes[attribute][0]
   attribute_values = attributes[attribute][1].split(',')
@@ -141,9 +153,13 @@ def split(attributes, data, depth)
         subset.push(row)
       end
     end
-    attributes.delete(attribute)
-    if subset.length > 2
+    if subset.length > 2 && information_gain > 0
+      attributes.delete(attribute)
       split(attributes, subset, depth + 2)
+    else
+      print ''.ljust(depth + 2)
+      answer = evaluate(attribute, attributes, data)
+      puts 'ANSWER:' + answer
     end
   end
 
@@ -159,14 +175,3 @@ data = parse_data(input)
 # Split database
 split(attributes, data, 0)
 
-
-
-
-# puts 'Attributes:'
-# puts attributes.inspect
-# puts 'Data:'
-# puts data.inspect
-# puts 'Entropy:'
-# puts entropy
-
-#

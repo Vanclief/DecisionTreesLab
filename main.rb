@@ -100,6 +100,11 @@ end
 
 def get_max_info_gain(attributes, data)
 
+  # puts 'attributes'
+  # puts attributes.inspect
+  # puts 'data'
+  # puts data.inspect
+
   entropy = get_entropy(attributes, data)
 
   keys = attributes.keys
@@ -117,7 +122,7 @@ def get_max_info_gain(attributes, data)
 
 end
 
-def split(attributes, data)
+def split(attributes, data, depth)
 
 
   attribute = get_max_info_gain(attributes, data)
@@ -128,16 +133,17 @@ def split(attributes, data)
   attribute_values.each do |value|
     subset = Array.new
     value = value.strip
+    print ''.ljust(depth)
     puts attribute + ": " + value
     data.each do |row|
       if row[attribute_index].include? value
-        row.delete(value)
+        row.delete_at(attribute_index)
         subset.push(row)
       end
     end
     attributes.delete(attribute)
-    if subset.length > 0
-      split(attributes, subset)
+    if subset.length > 2
+      split(attributes, subset, depth + 2)
     end
   end
 
@@ -151,7 +157,7 @@ attributes = parse_attributes(input)
 data = parse_data(input)
 
 # Split database
-split(attributes, data)
+split(attributes, data, 0)
 
 
 

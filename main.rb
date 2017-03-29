@@ -33,7 +33,7 @@ def parse_data(input_lines)
 
     data_line = line.match(/@data\s*(?<name>.*)\s*/)
 
-    if data_flag
+    if data_flag and !line.start_with? '%'
       line = line.strip
       line_arr = line.split(',')
       data.push(line_arr)
@@ -179,6 +179,8 @@ input = read_input()
 # Parse the input
 attributes = parse_attributes(input)
 data = parse_data(input)
+
+puts data.inspect
 
 # Split database
 split(attributes, data, 0)

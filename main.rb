@@ -153,13 +153,14 @@ def split(attributes, data, depth)
   attribute_index = attributes[attribute][0]
   attribute_values = attributes[attribute][1].split(',')
 
-  print ''.ljust(depth)
   if isPure(attributes, data)
+    print ''.ljust(depth)
     puts 'ANSWER: ' + data.first.last
   else
     attribute_values.each do |value|
       subset = Array.new
       value = value.strip
+      print ''.ljust(depth)
       puts attribute + ': ' + value
       data.each do |row|
         if row[attribute_index].include? value

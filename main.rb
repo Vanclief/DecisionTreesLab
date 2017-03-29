@@ -127,6 +127,8 @@ def get_max_info_gain(attributes, data)
     end
   end
 
+  # puts entropy
+  # puts information_gains.inspect
   return keys[max_index], information_gains.max
 
 end
@@ -179,8 +181,6 @@ input = read_input()
 # Parse the input
 attributes = parse_attributes(input)
 data = parse_data(input)
-
-puts data.inspect
 
 # Split database
 split(attributes, data, 0)

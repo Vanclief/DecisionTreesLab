@@ -131,35 +131,42 @@ def get_max_info_gain(attributes, data)
 
 end
 
+def isPure(attributes, set)
+
+  last_index = set.first.length - 1
+  attribute_value = set.first[last_index]
+
+  set.each do |row|
+    if row[last_index] != attribute_value
+      return false
+    end
+  end
+
+  return true
+
+end
+
 def split(attributes, data, depth)
 
   attribute, information_gain = get_max_info_gain(attributes, data)
-  # puts '-- SPLIT: ' + attribute + '--'
-    # data.each do |x|
-      # puts x.inspect
-    # end
 
   attribute_index = attributes[attribute][0]
   attribute_values = attributes[attribute][1].split(',')
 
-  attribute_values.each do |value|
-    subset = Array.new
-    value = value.strip
-    print ''.ljust(depth)
-    puts attribute + ": " + value
-    data.each do |row|
-      if row[attribute_index].include? value
-        row.delete_at(attribute_index)
-        subset.push(row)
+  print ''.ljust(depth)
+  if isPure(attributes, data)
+    puts 'ANSWER: ' + data.first.last
+  else
+    attribute_values.each do |value|
+      subset = Array.new
+      value = value.strip
+      puts attribute + ': ' + value
+      data.each do |row|
+        if row[attribute_index].include? value
+          subset.push(row)
+        end
       end
-    end
-    if subset.length > 2 && information_gain > 0
-      attributes.delete(attribute)
       split(attributes, subset, depth + 2)
-    else
-      print ''.ljust(depth + 2)
-      answer = evaluate(attribute, attributes, data)
-      puts 'ANSWER:' + answer
     end
   end
 
@@ -174,4 +181,3 @@ data = parse_data(input)
 
 # Split database
 split(attributes, data, 0)
-

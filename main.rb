@@ -17,7 +17,7 @@ def parse_attributes(input_lines)
 
     if attribute_name
       attributes[attribute_name['name']
-      .gsub(/\s.+/, '')] = [counter, attribute_value['value']]
+                 .gsub(/\s.+/, '')] = [counter, attribute_value['value']]
       counter += 1
     end
   end
@@ -85,13 +85,20 @@ def get_information_gain(attribute, attributes, data, entropy)
     attribute_value = attribute_value.strip
 
     data.each do |row|
-      if row[attribute_index].include? attribute_value
+      if row[attribute_index] == attribute_value
         filtered_data.push(row)
       end
     end
     size =  filtered_data.length
     e =  get_entropy(attributes, filtered_data)
     entropies += e * size.to_f / data.length
+
+    # if attribute.include? 'age'
+    #   puts '--'
+      # filtered_data.each do |row|
+        # puts row.inspect
+      # end
+    # end
   end
 
   return entropy - entropies
@@ -127,8 +134,6 @@ def get_max_info_gain(attributes, data)
     end
   end
 
-  # puts entropy
-  # puts information_gains.inspect
   return keys[max_index], information_gains.max
 
 end
@@ -165,7 +170,7 @@ def split(attributes, data, depth)
       print ''.ljust(depth)
       puts attribute + ': ' + value
       data.each do |row|
-        if row[attribute_index].include? value
+        if row[attribute_index] == value
           subset.push(row)
         end
       end

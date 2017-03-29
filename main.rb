@@ -21,7 +21,8 @@ def parse_attributes(input_lines)
       counter += 1
     end
   end
-  return attributes
+
+  attributes
 end
 
 def parse_data(input_lines)
@@ -30,7 +31,6 @@ def parse_data(input_lines)
   data_flag = false;
 
   input_lines.each do |line|
-
     data_line = line.match(/@data\s*(?<name>.*)\s*/)
 
     if data_flag and !line.start_with? '%'
@@ -43,13 +43,13 @@ def parse_data(input_lines)
       data_flag = true
     end
   end
-  return data
+
+  data
 end
 
 def get_entropy(attributes, data)
   entropy = 0
 
-  # Ok the following 3 lines make my eyes bleed, but Im in a hurry sorry
   attributes_array = attributes.to_a.last
   last_index = attributes_array[0]
   values = attributes[last_index][1].split(',')
@@ -71,7 +71,6 @@ def get_entropy(attributes, data)
   end
 
   return entropy * -1
-
 end
 
 def get_information_gain(attribute, attributes, data, entropy)
@@ -93,16 +92,9 @@ def get_information_gain(attribute, attributes, data, entropy)
     e =  get_entropy(attributes, filtered_data)
     entropies += e * size.to_f / data.length
 
-    # if attribute.include? 'age'
-    #   puts '--'
-      # filtered_data.each do |row|
-        # puts row.inspect
-      # end
-    # end
   end
 
   return entropy - entropies
-
 end
 
 def get_max_info_gain(attributes, data)
@@ -134,7 +126,7 @@ def get_max_info_gain(attributes, data)
     end
   end
 
-  return keys[max_index], information_gains.max
+  return keys[max_index]
 
 end
 
@@ -155,7 +147,7 @@ end
 
 def split(attributes, data, depth)
 
-  attribute, information_gain = get_max_info_gain(attributes, data)
+  attribute = get_max_info_gain(attributes, data)
 
   attribute_index = attributes[attribute][0]
   attribute_values = attributes[attribute][1].split(',')
@@ -187,5 +179,5 @@ input = read_input()
 attributes = parse_attributes(input)
 data = parse_data(input)
 
-# Split database
+# Split database (recursion)
 split(attributes, data, 0)
